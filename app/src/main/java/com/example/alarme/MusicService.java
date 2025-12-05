@@ -19,7 +19,7 @@ public class MusicService extends Service {
     public void onCreate() {
         super.onCreate();
         // Certifique-se de ter o arquivo musica_fundo na pasta res/raw
-        mediaPlayer = MediaPlayer.create(this, R.raw.Ringtone);
+        mediaPlayer = MediaPlayer.create(this, R.raw.ringtone);
         if (mediaPlayer != null) {
             mediaPlayer.setLooping(true);
         }

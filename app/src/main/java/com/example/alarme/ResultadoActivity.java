@@ -53,15 +53,17 @@ public class ResultadoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int selectedId = radioGroupCartelas.getCheckedRadioButtonId();
+
                 if (selectedId != -1) {
-                    // Parar a música
+                    // 1. Para a música imediatamente
                     Intent stopMusic = new Intent(ResultadoActivity.this, MusicService.class);
                     stopService(stopMusic);
 
-                    // Verificar acertos
+                    // 2. Identifica qual cartela foi escolhida
                     View radioButton = radioGroupCartelas.findViewById(selectedId);
                     int index = radioGroupCartelas.indexOfChild(radioButton);
 
+                    // 3. Chama a função que calcula o resultado e prepara o fechamento
                     if (dadosAtuais != null) {
                         List<String> cartelaEscolhida = dadosAtuais.getCartelas().get(index);
                         verificarResultado(cartelaEscolhida, dadosAtuais.getCombinacaoPremiada());
@@ -88,7 +90,7 @@ public class ResultadoActivity extends AppCompatActivity {
         int acertos = 0;
         StringBuilder sb = new StringBuilder();
 
-        // Construção da String com HTML para colorir
+        // --- Lógica Visual Original ---
         sb.append("<b>Sua Cartela:</b> ");
 
         for (String num : escolhida) {
@@ -107,16 +109,27 @@ public class ResultadoActivity extends AppCompatActivity {
         if (acertos >= 4) {
             sb.append("<b>Parabéns! Você acertou ").append(acertos).append(" números!</b>");
         } else {
-            sb.append("<b>Quase... só ").append(acertos).append(" números. Tente amanhã!</b>");
+            sb.append("<b>Quase... só ").append(acertos).append(" números.</b>");
         }
+        // -----------------------------
 
         tvResultado.setVisibility(View.VISIBLE);
         tvResultado.setText(Html.fromHtml(sb.toString(), Html.FROM_HTML_MODE_LEGACY));
 
-        // Desabilitar botão para impedir múltiplos cliques
+        // Desabilitar botão e opções para o usuário não clicar mais
         btnConfirmar.setEnabled(false);
+        btnConfirmar.setText("Fechando em 5 segundos...");
         for(int i = 0; i < radioGroupCartelas.getChildCount(); i++){
             radioGroupCartelas.getChildAt(i).setEnabled(false);
         }
+
+        // --- Temporizador para fechar (5 segundos) ---
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Fecha o app totalmente
+                finishAffinity();
+            }
+        }, 5000); // 5000 milissegundos = 5 segundos
     }
 }
