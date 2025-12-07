@@ -1,10 +1,13 @@
-package com.example.alarme;
+package com.example.alarme.ui;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.alarme.repository.LoteriaRepository;
+import com.example.alarme.model.SorteioData;
 
 public class LoteriaViewModel extends AndroidViewModel {
 

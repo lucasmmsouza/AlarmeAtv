@@ -1,4 +1,4 @@
-package com.example.alarme;
+package com.example.alarme.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;

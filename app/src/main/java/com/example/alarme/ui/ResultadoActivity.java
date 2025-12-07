@@ -1,7 +1,6 @@
-package com.example.alarme;
+package com.example.alarme.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -13,6 +12,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import com.example.alarme.service.MusicService;
+import com.example.alarme.R;
+import com.example.alarme.model.SorteioData;
+
 import java.util.List;
 
 public class ResultadoActivity extends AppCompatActivity {
@@ -32,7 +35,6 @@ public class ResultadoActivity extends AppCompatActivity {
         btnConfirmar = findViewById(R.id.btnConfirmar);
         tvResultado = findViewById(R.id.tvResultado);
 
-        // Inicia a música assim que a tela abre
         Intent musicIntent = new Intent(this, MusicService.class);
         startService(musicIntent);
 
@@ -53,17 +55,11 @@ public class ResultadoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int selectedId = radioGroupCartelas.getCheckedRadioButtonId();
-
                 if (selectedId != -1) {
-                    // 1. Para a música imediatamente
                     Intent stopMusic = new Intent(ResultadoActivity.this, MusicService.class);
                     stopService(stopMusic);
-
-                    // 2. Identifica qual cartela foi escolhida
                     View radioButton = radioGroupCartelas.findViewById(selectedId);
                     int index = radioGroupCartelas.indexOfChild(radioButton);
-
-                    // 3. Chama a função que calcula o resultado e prepara o fechamento
                     if (dadosAtuais != null) {
                         List<String> cartelaEscolhida = dadosAtuais.getCartelas().get(index);
                         verificarResultado(cartelaEscolhida, dadosAtuais.getCombinacaoPremiada());
@@ -89,47 +85,40 @@ public class ResultadoActivity extends AppCompatActivity {
     private void verificarResultado(List<String> escolhida, List<String> premiada) {
         int acertos = 0;
         StringBuilder sb = new StringBuilder();
-
-        // --- Lógica Visual Original ---
-        sb.append("<b>Sua Cartela:</b> ");
+        sb.append("<b>").append(getString(R.string.label_sua_cartela)).append("</b> ");
 
         for (String num : escolhida) {
             if (premiada.contains(num)) {
                 acertos++;
-                // Verde para acerto
                 sb.append("<font color='#00FF00'>").append(num).append("</font> ");
             } else {
                 sb.append(num).append(" ");
             }
         }
 
-        sb.append("<br/><br/><b>Premiada:</b> ").append(premiada.toString());
+        sb.append("<br/><br/><b>").append(getString(R.string.label_premiada)).append("</b> ").append(premiada.toString());
         sb.append("<br/><br/>");
 
         if (acertos >= 4) {
-            sb.append("<b>Parabéns! Você acertou ").append(acertos).append(" números!</b>");
+            sb.append("<b>").append(getString(R.string.msg_parabens, acertos)).append("</b>");
         } else {
-            sb.append("<b>Quase... só ").append(acertos).append(" números.</b>");
+            sb.append("<b>").append(getString(R.string.msg_quase, acertos)).append("</b>");
         }
-        // -----------------------------
 
         tvResultado.setVisibility(View.VISIBLE);
         tvResultado.setText(Html.fromHtml(sb.toString(), Html.FROM_HTML_MODE_LEGACY));
-
-        // Desabilitar botão e opções para o usuário não clicar mais
         btnConfirmar.setEnabled(false);
         btnConfirmar.setText("Fechando em 5 segundos...");
         for(int i = 0; i < radioGroupCartelas.getChildCount(); i++){
             radioGroupCartelas.getChildAt(i).setEnabled(false);
         }
 
-        // --- Temporizador para fechar (5 segundos) ---
+        //fecha o app dps de 5 sec
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                // Fecha o app totalmente
                 finishAffinity();
             }
-        }, 5000); // 5000 milissegundos = 5 segundos
+        }, 5000);
     }
 }

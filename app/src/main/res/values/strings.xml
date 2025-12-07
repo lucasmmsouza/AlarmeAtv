@@ -7,7 +7,20 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+
+    <!-- Main activity -->
+    <string name="msg_alarme_agendado">Alarme agendado!</string>
+    <string name="msg_erro_permissao">Permissão necessária para o alarme funcionar.</string>
+
+    <!-- Segunda activity -->
+    <string name="label_sua_cartela">Sua Cartela:</string>
+    <string name="label_premiada">Premiada:</string>
+    <string name="msg_parabens">Parabéns! Você acertou %d números!</string>
+    <string name="msg_quase">Quase... só %d números.</string>
+    <string name="btn_fechando">Fechando em 5 segundos...</string>
+    <string name="txtview_novo_alarme">Novo Alarme</string>
+    <string name="txtview_definir_alarme">DEFINIR ALARME</string>
+    <string name="escolha_uma_cartela">ESCOLHA UMA CARTELA!</string>
+    <string name="txt_alarme_sec_atv">O alarme vai parar ao escolher uma cartela</string>
+
 </resources>

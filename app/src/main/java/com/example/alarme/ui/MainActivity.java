@@ -1,11 +1,10 @@
-package com.example.alarme;
+package com.example.alarme.ui;
 import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import com.example.alarme.service.AlarmReceiver;
+import com.example.alarme.R;
+
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         timePicker = findViewById(R.id.timePicker);
         btnMarcarAlarme = findViewById(R.id.btnMarcarAlarme);
 
@@ -40,12 +41,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void verificarPermissaoEAgendar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
-            } else {
-                agendarAlarme();
-            }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager
+                .PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                    .POST_NOTIFICATIONS}, REQUEST_CODE_POST_NOTIFICATIONS);
         } else {
             agendarAlarme();
         }
@@ -54,30 +53,24 @@ public class MainActivity extends AppCompatActivity {
     private void agendarAlarme() {
         int hour = timePicker.getHour();
         int minute = timePicker.getMinute();
-
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
         calendar.set(Calendar.SECOND, 0);
 
-        // Se o horário já passou hoje, agenda para amanhã
         if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
             calendar.add(Calendar.DAY_OF_YEAR, 1);
-        }
+        }//joga o alarme pro dia seguinte se ja tiver passado do horário
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
 
         int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            flags |= PendingIntent.FLAG_IMMUTABLE;
-        }
-
+        flags |= PendingIntent.FLAG_IMMUTABLE;
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, flags);
-
         if (alarmManager != null) {
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-            Toast.makeText(this, "Alarme agendado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.msg_alarme_agendado), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -88,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 agendarAlarme();
             } else {
-                Toast.makeText(this, "Permissão necessária para o alarme funcionar.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.msg_erro_permissao), Toast.LENGTH_LONG).show();
             }
         }
     }

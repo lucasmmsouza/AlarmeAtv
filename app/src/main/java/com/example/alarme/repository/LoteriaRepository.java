@@ -1,8 +1,12 @@
-package com.example.alarme;
+package com.example.alarme.repository;
 
 import android.os.Handler;
 import android.os.Looper;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.alarme.http.Conexao;
+import com.example.alarme.http.Conversao;
+import com.example.alarme.model.SorteioData;
 import com.google.gson.Gson;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
@@ -12,7 +16,6 @@ public class LoteriaRepository {
 
 
     private static final String URL_API = "https://my-json-server.typicode.com/lucasmmsouza/AlarmeAtv/db";
-
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
@@ -30,7 +33,7 @@ public class LoteriaRepository {
                     Gson gson = new Gson();
                     final SorteioData dados = gson.fromJson(jsonString, SorteioData.class);
 
-                    // Postar na thread principal
+                    // post thread principal
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
