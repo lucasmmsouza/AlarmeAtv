@@ -1,6 +1,7 @@
 package com.example.alarme.ui;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -36,7 +37,8 @@ public class ResultadoActivity extends AppCompatActivity {
         tvResultado = findViewById(R.id.tvResultado);
 
         Intent musicIntent = new Intent(this, MusicService.class);
-        startService(musicIntent);
+
+        startForegroundService(musicIntent);
 
         viewModel = new ViewModelProvider(this).get(LoteriaViewModel.class);
         viewModel.carregarDados();
@@ -113,7 +115,6 @@ public class ResultadoActivity extends AppCompatActivity {
             radioGroupCartelas.getChildAt(i).setEnabled(false);
         }
 
-        //fecha o app dps de 5 sec
         new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
