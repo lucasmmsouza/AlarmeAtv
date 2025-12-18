@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Build;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
@@ -57,7 +58,9 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         if (!PermissionHelper.agendarAlarmExact(this)) {
-            Toast.makeText(this, "Permissão necessária para alarmes exatos.", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+            startActivity(intent);
+            Toast.makeText(this, "Por favor, permita alarmes exatos para o app funcionar.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -77,8 +80,13 @@ public class MainActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, flags);
 
         if (alarmManager != null) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
-            Toast.makeText(this, getString(R.string.msg_alarme_agendado), Toast.LENGTH_SHORT).show();
+            try {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
+                Toast.makeText(this, getString(R.string.msg_alarme_agendado), Toast.LENGTH_SHORT).show();
+            } catch (SecurityException e) {
+                Toast.makeText(this, "Erro: Permissão de alarme exato revogada.", Toast.LENGTH_LONG).show();
+
+            }
         }
     }
 
